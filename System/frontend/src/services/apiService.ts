@@ -5,6 +5,7 @@ import type {
   ClassDetail,
   Evaluation,
   EvaluationConcept,
+  EvaluationSummaryRow,
   Goal,
   CreateInput,
 } from '../types/index';
@@ -67,3 +68,6 @@ export const patchEvaluation = (payload: {
   concept: EvaluationConcept;
 }): Promise<Evaluation> =>
   api.patch<Evaluation>('/evaluations', payload).then((r) => r.data);
+
+export const getEvaluationSummary = (): Promise<EvaluationSummaryRow[]> =>
+  api.get<EvaluationSummaryRow[]>('/evaluations/summary').then((r) => r.data);

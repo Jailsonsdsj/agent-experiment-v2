@@ -109,3 +109,19 @@ export interface EvaluationUpdate {
  * @example CreateInput<Evaluation> → { studentId, classId, goal, concept }
  */
 export type CreateInput<T> = Omit<T, 'id' | 'updatedAt'>;
+
+/**
+ * One row in the GET /evaluations/summary response.
+ * Represents a single student's most recent concept per goal across all classes.
+ * goals is Partial because not every goal will have been evaluated yet.
+ */
+export interface EvaluationSummaryRow {
+  studentId: string;
+  studentName: string;
+  goals: Partial<Record<Goal, {
+    concept: EvaluationConcept;
+    updatedAt: string;
+    classId: string;
+    className: string;
+  }>>;
+}

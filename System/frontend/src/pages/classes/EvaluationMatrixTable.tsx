@@ -1,6 +1,7 @@
 import { useState, useCallback, type JSX } from 'react';
 import { patchEvaluation } from '../../services/apiService';
 import { Badge } from '../../components/index';
+import { GOALS } from '../../utils/evaluationConstants';
 import type { Student, Evaluation, EvaluationConcept, Goal } from '../../types/index';
 
 // ─── Types ────────────────────────────────────────────────────────────────────
@@ -20,14 +21,6 @@ interface EvaluationMatrixTableProps {
 }
 
 // ─── Constants ────────────────────────────────────────────────────────────────
-
-const GOALS: Goal[] = [
-  'Requirements',
-  'Tests',
-  'Implementation',
-  'Design',
-  'Process',
-];
 
 const CONCEPT_OPTIONS: Array<{ value: EvaluationConcept | 'empty'; label: string }> = [
   { value: 'empty', label: '— Not evaluated' },

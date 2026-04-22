@@ -38,5 +38,45 @@
     "goal": "Process",
     "concept": "MANA",
     "updatedAt": "2026-04-22T22:36:42.423Z"
+  },
+  {
+    "id": "0e146a36-4e3c-4a23-8c2b-8f3ebdfad7dd",
+    "studentId": "c18b7a76-82f9-4740-a501-71b2df39e61e",
+    "classId": "186917f8-1dae-48d6-96c2-f378ab9633be",
+    "goal": "Requirements",
+    "concept": "MANA",
+    "updatedAt": "2026-04-22T22:51:33.249Z"
+  },
+  {
+    "id": "2e1e9488-d272-4138-a636-6b5963ed737e",
+    "studentId": "c18b7a76-82f9-4740-a501-71b2df39e61e",
+    "classId": "186917f8-1dae-48d6-96c2-f378ab9633be",
+    "goal": "Tests",
+    "concept": "MA",
+    "updatedAt": "2026-04-22T22:51:35.228Z"
+  },
+  {
+    "id": "4f100eac-765f-4709-ae36-72e0a7586371",
+    "studentId": "c18b7a76-82f9-4740-a501-71b2df39e61e",
+    "classId": "186917f8-1dae-48d6-96c2-f378ab9633be",
+    "goal": "Implementation",
+    "concept": "MA",
+    "updatedAt": "2026-04-22T22:51:36.677Z"
+  },
+  {
+    "id": "064cd713-865f-4a31-bfaa-4a9e24f9c37c",
+    "studentId": "c18b7a76-82f9-4740-a501-71b2df39e61e",
+    "classId": "186917f8-1dae-48d6-96c2-f378ab9633be",
+    "goal": "Design",
+    "concept": "MA",
+    "updatedAt": "2026-04-22T22:51:38.122Z"
+  },
+  {
+    "id": "258f54e3-e3ed-44b7-b60e-a36c8c684eb7",
+    "studentId": "c18b7a76-82f9-4740-a501-71b2df39e61e",
+    "classId": "186917f8-1dae-48d6-96c2-f378ab9633be",
+    "goal": "Process",
+    "concept": "MA",
+    "updatedAt": "2026-04-22T22:51:39.396Z"
   }
 ]

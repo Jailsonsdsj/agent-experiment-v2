@@ -8,12 +8,7 @@ import { ClassCreatePage } from './pages/classes/ClassCreatePage';
 import { ClassListPage } from './pages/classes/ClassListPage';
 import { ClassEditPage } from './pages/classes/ClassEditPage';
 import { ClassDetailPage } from './pages/classes/ClassDetailPage';
-
-const EvaluationsPage = (): JSX.Element => (
-  <div>
-    <h1 className="font-display font-bold text-2xl text-neutral-800">Evaluations</h1>
-  </div>
-);
+import { EvaluationsPage } from './pages/evaluations/EvaluationsPage';
 
 function App(): JSX.Element {
   return (
