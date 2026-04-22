@@ -17,6 +17,7 @@ export type DomainErrorCode =
   | 'NOT_FOUND'
   | 'CPF_DUPLICATE'
   | 'STUDENT_ENROLLED'
+  | 'INVALID_REFERENCE'
   | 'CONFLICT';
 
 /**
