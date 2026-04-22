@@ -5,6 +5,7 @@ import { initializeStorage } from './services/jsonStorageService';
 import studentRouter from './routes/studentRoutes';
 import classRouter from './routes/classRoutes';
 import evaluationRouter from './routes/evaluationRoutes';
+import { startEmailScheduler } from './jobs/emailScheduler';
 import { errorHandler } from './middlewares/errorHandler';
 
 // ─── Startup validation ───────────────────────────────────────────────────────
@@ -57,6 +58,7 @@ const start = async (): Promise<void> => {
   await initializeStorage();
   app.listen(PORT, () => {
     console.error(`[server] Listening on http://localhost:${PORT}`);
+    startEmailScheduler();
   });
 };
 
