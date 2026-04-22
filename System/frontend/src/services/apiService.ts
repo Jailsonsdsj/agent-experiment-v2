@@ -32,5 +32,11 @@ export const deleteStudent = (id: string): Promise<void> =>
 
 // ─── Class endpoints ──────────────────────────────────────────────────────────
 
+export const getClasses = (): Promise<Class[]> =>
+  api.get<Class[]>('/classes').then((r) => r.data);
+
 export const createClass = (input: CreateInput<Class>): Promise<Class> =>
   api.post<Class>('/classes', input).then((r) => r.data);
+
+export const deleteClass = (id: string): Promise<void> =>
+  api.delete(`/classes/${id}`).then(() => undefined);
