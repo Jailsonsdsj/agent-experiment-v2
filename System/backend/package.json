@@ -4,15 +4,22 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "cucumber-js",
+    "test:dry": "cucumber-js --dry-run",
+    "test:tags": "cucumber-js --tags",
     "dev": "ts-node src/index.ts",
     "build": "tsc",
     "start": "node dist/index.js"
+  },
+  "ts-node": {
+    "project": "tsconfig.cucumber.json",
+    "transpileOnly": true
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "devDependencies": {
+    "@cucumber/cucumber": "^12.8.1",
     "@types/cors": "^2.8.19",
     "@types/express": "^5.0.6",
     "@types/fs-extra": "^11.0.4",

@@ -4,10 +4,17 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
+    "test": "TS_NODE_PROJECT=tsconfig.cucumber.json cucumber-js",
+    "test:dry": "TS_NODE_PROJECT=tsconfig.cucumber.json cucumber-js --dry-run",
+    "test:tags": "TS_NODE_PROJECT=tsconfig.cucumber.json cucumber-js --tags",
     "dev": "vite",
     "build": "tsc -b && vite build",
     "lint": "eslint .",
     "preview": "vite preview"
+  },
+  "ts-node": {
+    "esm": true,
+    "transpileOnly": true
   },
   "dependencies": {
     "@tailwindcss/vite": "^4.2.4",
@@ -17,6 +24,7 @@
     "react-router-dom": "^7.14.2"
   },
   "devDependencies": {
+    "@cucumber/cucumber": "^12.8.1",
     "@eslint/js": "^9.39.4",
     "@types/node": "^24.12.2",
     "@types/react": "^19.2.14",
@@ -29,6 +37,7 @@
     "globals": "^17.5.0",
     "postcss": "^8.5.10",
     "tailwindcss": "^4.2.4",
+    "ts-node": "^10.9.2",
     "typescript": "~6.0.2",
     "typescript-eslint": "^8.58.2",
     "vite": "^8.0.9"

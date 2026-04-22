@@ -1,0 +1,26 @@
+{
+  "default": {
+    "paths": [
+      "features/**/*.feature"
+    ],
+    "require": [
+      "features/step-definitions/**/*.ts",
+      "features/support/**/*.ts"
+    ],
+    "requireModule": [
+      "ts-node/register"
+    ],
+    "format": [
+      "progress-bar",
+      "json:reports/cucumber-report.json"
+    ],
+    "formatOptions": {
+      "snippetInterface": "async-await"
+    },
+    "publishQuiet": true,
+    "tsNodeOpts": {
+      "project": "tsconfig.cucumber.json",
+      "transpileOnly": true
+    }
+  }
+}

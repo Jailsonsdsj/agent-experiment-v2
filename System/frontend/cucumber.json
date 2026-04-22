@@ -1,0 +1,22 @@
+{
+  "default": {
+    "paths": [
+      "features/**/*.feature"
+    ],
+    "import": [
+      "features/step-definitions/**/*.ts",
+      "features/support/**/*.ts"
+    ],
+    "loader": [
+      "ts-node/esm"
+    ],
+    "format": [
+      "progress-bar",
+      "json:reports/cucumber-report.json"
+    ],
+    "formatOptions": {
+      "snippetInterface": "async-await"
+    },
+    "publishQuiet": true
+  }
+}
