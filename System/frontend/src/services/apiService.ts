@@ -1,5 +1,13 @@
 import axios from 'axios';
-import type { Student, Class, ClassDetail, CreateInput } from '../types/index';
+import type {
+  Student,
+  Class,
+  ClassDetail,
+  Evaluation,
+  EvaluationConcept,
+  Goal,
+  CreateInput,
+} from '../types/index';
 
 // ─── Shared Axios instance ────────────────────────────────────────────────────
 
@@ -49,3 +57,13 @@ export const updateClass = (
 
 export const deleteClass = (id: string): Promise<void> =>
   api.delete(`/classes/${id}`).then(() => undefined);
+
+// ─── Evaluation endpoints ─────────────────────────────────────────────────────
+
+export const patchEvaluation = (payload: {
+  studentId: string;
+  classId: string;
+  goal: Goal;
+  concept: EvaluationConcept;
+}): Promise<Evaluation> =>
+  api.patch<Evaluation>('/evaluations', payload).then((r) => r.data);

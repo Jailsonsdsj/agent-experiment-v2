@@ -4,6 +4,7 @@ import cors from 'cors';
 import { initializeStorage } from './services/jsonStorageService';
 import studentRouter from './routes/studentRoutes';
 import classRouter from './routes/classRoutes';
+import evaluationRouter from './routes/evaluationRoutes';
 import { errorHandler } from './middlewares/errorHandler';
 
 // ─── Startup validation ───────────────────────────────────────────────────────
@@ -44,6 +45,7 @@ app.get('/health', (_req, res) => {
 
 app.use('/students', studentRouter);
 app.use('/classes', classRouter);
+app.use('/evaluations', evaluationRouter);
 
 // ─── Global error handler (must be last) ─────────────────────────────────────
 
