@@ -2,6 +2,7 @@ import React from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { StudentListPage } from './pages/students/StudentListPage';
 import { StudentCreatePage } from './pages/students/StudentCreatePage';
+import { StudentEditPage } from './pages/students/StudentEditPage';
 
 function App(): JSX.Element {
   return (
@@ -10,6 +11,7 @@ function App(): JSX.Element {
         <Route path="/" element={<Navigate to="/students" replace />} />
         <Route path="/students" element={<StudentListPage />} />
         <Route path="/students/new" element={<StudentCreatePage />} />
+        <Route path="/students/:id/edit" element={<StudentEditPage />} />
       </Routes>
     </BrowserRouter>
   );
