@@ -1,6 +1,6 @@
 import { v4 as uuidv4 } from 'uuid';
 import { readData, writeData, FILES } from './jsonStorageService';
-import type { Student, Class, CreateInput } from '../types/index';
+import type { Student, Class, Evaluation, CreateInput } from '../types/index';
 
 // ─── Error taxonomy ───────────────────────────────────────────────────────────
 
@@ -166,14 +166,18 @@ export const updateStudent = async (
  * any class's studentIds array). This enforces referential integrity
  * without a database foreign-key constraint.
  *
- * Does NOT cascade-delete evaluations — evaluation cleanup is handled
- * by classService when a class is deleted.
+ * Cascades to evaluations.json: all evaluation records belonging to the
+ * deleted student are removed regardless of class enrollment history.
+ * Write order: students.json first, then evaluations.json. If the
+ * evaluations write fails after the students write succeeds, orphaned
+ * evaluation rows remain (unreachable but recoverable). The reverse order
+ * would silently destroy a still-existing student's evaluation history.
  *
  * @param id - The UUID of the student to delete.
  * @returns void on success.
  * @throws  DomainError('NOT_FOUND')        if no student with that id exists.
  * @throws  DomainError('STUDENT_ENROLLED') if the student is enrolled in any class.
- * @throws  Error (infrastructure)          if either file read/write fails.
+ * @throws  Error (infrastructure)          if any file read/write fails.
  */
 export const deleteStudent = async (id: string): Promise<void> => {
   const students = await readData<Student>(FILES.STUDENTS);
@@ -195,4 +199,10 @@ export const deleteStudent = async (id: string): Promise<void> => {
 
   const updatedStudents = students.filter((s) => s.id !== id);
   await writeData<Student>(FILES.STUDENTS, updatedStudents);
+
+  const allEvaluations = await readData<Evaluation>(FILES.EVALUATIONS);
+  const remainingEvaluations = allEvaluations.filter(
+    (e) => e.studentId !== id,
+  );
+  await writeData<Evaluation>(FILES.EVALUATIONS, remainingEvaluations);
 };
