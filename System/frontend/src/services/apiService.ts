@@ -1,5 +1,5 @@
 import axios from 'axios';
-import type { Student, CreateInput } from '../types/index';
+import type { Student, Class, CreateInput } from '../types/index';
 
 // ─── Shared Axios instance ────────────────────────────────────────────────────
 
@@ -29,3 +29,8 @@ export const updateStudent = (
 
 export const deleteStudent = (id: string): Promise<void> =>
   api.delete(`/students/${id}`).then(() => undefined);
+
+// ─── Class endpoints ──────────────────────────────────────────────────────────
+
+export const createClass = (input: CreateInput<Class>): Promise<Class> =>
+  api.post<Class>('/classes', input).then((r) => r.data);

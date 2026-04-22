@@ -4,12 +4,8 @@ import { AppLayout } from './components';
 import { StudentListPage } from './pages/students/StudentListPage';
 import { StudentCreatePage } from './pages/students/StudentCreatePage';
 import { StudentEditPage } from './pages/students/StudentEditPage';
-
-const ClassListPage = (): JSX.Element => (
-  <div>
-    <h1 className="font-display font-bold text-2xl text-neutral-800">Classes</h1>
-  </div>
-);
+import { ClassCreatePage } from './pages/classes/ClassCreatePage';
+import { ClassListPage } from './pages/classes/ClassListPage';
 
 const EvaluationsPage = (): JSX.Element => (
   <div>
@@ -27,6 +23,7 @@ function App(): JSX.Element {
           <Route path="/students/new" element={<StudentCreatePage />} />
           <Route path="/students/:id/edit" element={<StudentEditPage />} />
           <Route path="/classes" element={<ClassListPage />} />
+          <Route path="/classes/new" element={<ClassCreatePage />} />
           <Route path="/evaluations" element={<EvaluationsPage />} />
         </Route>
       </Routes>
