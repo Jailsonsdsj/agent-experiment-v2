@@ -47,7 +47,7 @@ export function Table<T extends Record<string, unknown>>({
                 ))}
               </tr>
             ))
-          ) : data.length === 0 ? (
+          ) : !Array.isArray(data) || data.length === 0 ? (
             <tr>
               <td
                 colSpan={columns.length}
@@ -57,7 +57,7 @@ export function Table<T extends Record<string, unknown>>({
               </td>
             </tr>
           ) : (
-            data.map((row, rowIdx) => (
+            (data as T[]).map((row, rowIdx) => (
               <tr
                 key={rowIdx}
                 className="border-b border-neutral-200 hover:bg-neutral-50 transition-colors duration-100"
