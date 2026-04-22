@@ -1,1 +1,11 @@
-[]
+[
+  {
+    "id": "186917f8-1dae-48d6-96c2-f378ab9633be",
+    "topic": "teste2",
+    "year": 2026,
+    "semester": 2,
+    "studentIds": [
+      "7bd11156-51a1-4c77-a0e1-b67dd74a1deb"
+    ]
+  }
+]

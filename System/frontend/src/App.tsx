@@ -6,16 +6,11 @@ import { StudentCreatePage } from './pages/students/StudentCreatePage';
 import { StudentEditPage } from './pages/students/StudentEditPage';
 import { ClassCreatePage } from './pages/classes/ClassCreatePage';
 import { ClassListPage } from './pages/classes/ClassListPage';
+import { ClassEditPage } from './pages/classes/ClassEditPage';
 
 const ClassDetailPage = (): JSX.Element => (
   <div>
     <h1 className="font-display font-bold text-2xl text-neutral-800">Class Detail</h1>
-  </div>
-);
-
-const ClassEditPage = (): JSX.Element => (
-  <div>
-    <h1 className="font-display font-bold text-2xl text-neutral-800">Edit Class</h1>
   </div>
 );
 
