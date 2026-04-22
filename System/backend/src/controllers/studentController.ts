@@ -21,7 +21,7 @@ export const getStudentById = async (
   next: NextFunction,
 ): Promise<void> => {
   try {
-    const { id } = req.params;
+    const id = String(req.params.id);
     const student = await studentService.getStudentById(id);
     res.status(200).json(student);
   } catch (error) {
@@ -71,7 +71,7 @@ export const updateStudent = async (
   next: NextFunction,
 ): Promise<void> => {
   try {
-    const { id } = req.params;
+    const id = String(req.params.id);
     const { name, cpf, email } = req.body as Record<string, unknown>;
 
     const input: { name?: string; cpf?: string; email?: string } = {};
@@ -105,7 +105,7 @@ export const deleteStudent = async (
   next: NextFunction,
 ): Promise<void> => {
   try {
-    const { id } = req.params;
+    const id = String(req.params.id);
 
     if (!id || !id.trim()) {
       res.status(400).json({ error: 'Student id is required.' });

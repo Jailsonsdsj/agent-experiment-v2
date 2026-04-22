@@ -7,12 +7,22 @@ import { errorHandler } from './middlewares/errorHandler';
 
 // ─── Startup validation ───────────────────────────────────────────────────────
 
-const REQUIRED_ENV = ['PORT', 'FRONTEND_URL', 'DATA_DIR'] as const;
-for (const key of REQUIRED_ENV) {
-  if (!process.env[key]) {
-    console.error(`[startup] Missing required environment variable: ${key}`);
-    process.exit(1);
-  }
+const REQUIRED_ENV_VARS = [
+  'PORT',
+  'FRONTEND_URL',
+  'GMAIL_USER',
+  'GMAIL_APP_PASSWORD',
+  'DATA_DIR',
+] as const;
+
+const missingVars = REQUIRED_ENV_VARS.filter((key) => !process.env[key]);
+
+if (missingVars.length > 0) {
+  console.error(
+    `[startup] Missing required environment variables:\n` +
+      missingVars.map((v) => `  - ${v}`).join('\n'),
+  );
+  process.exit(1);
 }
 
 const PORT = Number(process.env.PORT) || 3333;
