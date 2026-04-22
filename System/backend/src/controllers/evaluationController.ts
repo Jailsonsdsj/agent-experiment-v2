@@ -28,7 +28,7 @@ export const patchEvaluation = async (
       return;
     }
 
-    const evaluation = await evaluationService.patchEvaluation({
+    const evaluation = await evaluationService.upsertEvaluation({
       studentId,
       classId,
       goal: goal as Goal,
@@ -39,18 +39,30 @@ export const patchEvaluation = async (
   } catch (error) {
     if (error instanceof DomainError) {
       switch (error.code) {
-        case 'INVALID_REFERENCE':
+        case 'VALIDATION_ERROR':
           res.status(400).json({ error: error.message });
+          return;
+        case 'NOT_FOUND':
+          res.status(404).json({ error: error.message });
           return;
         default:
           res.status(400).json({ error: error.message });
           return;
       }
     }
-    if (error instanceof Error && error.message.startsWith('Invalid')) {
-      res.status(400).json({ error: error.message });
-      return;
-    }
+    next(error);
+  }
+};
+
+export const getEvaluationSummary = async (
+  _req: Request,
+  res: Response,
+  next: NextFunction,
+): Promise<void> => {
+  try {
+    const summary = await evaluationService.getEvaluationSummary();
+    res.status(200).json(summary);
+  } catch (error) {
     next(error);
   }
 };

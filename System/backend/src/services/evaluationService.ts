@@ -1,7 +1,15 @@
 import { v4 as uuidv4 } from 'uuid';
 import { readData, writeData, FILES } from './jsonStorageService';
 import { DomainError } from './studentService';
-import type { Evaluation, EvaluationConcept, Goal, Class, Student } from '../types/index';
+import type {
+  Evaluation,
+  EvaluationConcept,
+  EvaluationSummaryRow,
+  Goal,
+  Class,
+  Student,
+  UpsertEvaluationInput,
+} from '../types/index';
 
 // ─── Constants ────────────────────────────────────────────────────────────────
 
@@ -18,73 +26,136 @@ const VALID_GOALS = new Set<Goal>([
 // ─── Service functions ────────────────────────────────────────────────────────
 
 /**
- * Creates or updates a single evaluation entry for a (studentId, classId, goal) triple.
+ * Creates or updates a single evaluation for a (studentId, classId, goal) composite key.
  *
- * If an evaluation already exists for that triple, updates its concept and
- * sets updatedAt to now. Otherwise creates a new record with a new UUID.
+ * Validates concept, goal, and id presence before any I/O.
+ * On UPDATE: replaces concept and sets updatedAt to now; id is preserved.
+ * On CREATE: generates a new UUID and sets updatedAt to now.
  *
- * @throws DomainError('INVALID_REFERENCE') if studentId or classId are not found.
- * @throws DomainError('INVALID_REFERENCE') if the student is not enrolled in the class.
- * @throws Error with a descriptive message if concept or goal are invalid.
+ * @param input - The four caller-supplied fields (id and updatedAt are generated here).
+ * @returns The created or updated Evaluation record.
+ * @throws DomainError('VALIDATION_ERROR') if concept, goal, studentId, or classId are invalid.
+ * @throws Error (infrastructure) if the write to evaluations.json fails.
  */
-export const patchEvaluation = async (payload: {
-  studentId: string;
-  classId: string;
-  goal: Goal;
-  concept: EvaluationConcept;
-}): Promise<Evaluation> => {
-  const { studentId, classId, goal, concept } = payload;
-
-  if (!VALID_CONCEPTS.has(concept)) {
-    throw new Error(
-      `Invalid concept "${concept}". Must be one of: ${[...VALID_CONCEPTS].join(', ')}.`,
+export const upsertEvaluation = async (
+  input: UpsertEvaluationInput,
+): Promise<Evaluation> => {
+  if (!input.studentId || !input.studentId.trim()) {
+    throw new DomainError('VALIDATION_ERROR', 'Field "studentId" must be a non-empty string.');
+  }
+  if (!input.classId || !input.classId.trim()) {
+    throw new DomainError('VALIDATION_ERROR', 'Field "classId" must be a non-empty string.');
+  }
+  if (!VALID_CONCEPTS.has(input.concept)) {
+    throw new DomainError(
+      'VALIDATION_ERROR',
+      `Invalid concept "${input.concept}". Must be MANA, MPA, or MA.`,
+    );
+  }
+  if (!VALID_GOALS.has(input.goal)) {
+    throw new DomainError(
+      'VALIDATION_ERROR',
+      `Invalid goal "${input.goal}". Must be one of: ${[...VALID_GOALS].join(', ')}.`,
     );
   }
 
-  if (!VALID_GOALS.has(goal)) {
-    throw new Error(
-      `Invalid goal "${goal}". Must be one of: ${[...VALID_GOALS].join(', ')}.`,
-    );
+  const evaluations = await readData<Evaluation>(FILES.EVALUATIONS);
+
+  const existingIndex = evaluations.findIndex(
+    (e) =>
+      e.studentId === input.studentId &&
+      e.classId   === input.classId   &&
+      e.goal      === input.goal,
+  );
+
+  const now = new Date().toISOString();
+  let result: Evaluation;
+
+  if (existingIndex !== -1) {
+    result = {
+      ...evaluations[existingIndex],
+      concept: input.concept,
+      updatedAt: now,
+    };
+    const updated = evaluations.map((e, i) => (i === existingIndex ? result : e));
+    await writeData<Evaluation>(FILES.EVALUATIONS, updated);
+  } else {
+    result = {
+      id: uuidv4(),
+      studentId: input.studentId,
+      classId: input.classId,
+      goal: input.goal,
+      concept: input.concept,
+      updatedAt: now,
+    };
+    await writeData<Evaluation>(FILES.EVALUATIONS, [...evaluations, result]);
   }
 
+  return result;
+};
+
+/**
+ * Returns all evaluations for a given classId.
+ *
+ * Used by classService.getClassById to populate the ClassDetail response
+ * without coupling classService to evaluations.json directly.
+ *
+ * @param classId - UUID of the class whose evaluations to retrieve.
+ * @returns Matching Evaluation records, or [] if none exist.
+ * @throws Error (infrastructure) if the read from evaluations.json fails.
+ */
+export const getEvaluationsByClassId = async (
+  classId: string,
+): Promise<Evaluation[]> => {
+  const evaluations = await readData<Evaluation>(FILES.EVALUATIONS);
+  return evaluations.filter((e) => e.classId === classId);
+};
+
+/**
+ * Produces a global summary: for each student, their most recent evaluation
+ * concept per goal across all classes.
+ *
+ * When a student has been evaluated for the same goal in multiple classes,
+ * the evaluation with the highest updatedAt string wins — ISO 8601 strings
+ * sort lexicographically in the same order as their UTC timestamps.
+ *
+ * @returns Array of EvaluationSummaryRow sorted alphabetically by student name.
+ *          Returns [] if no students exist.
+ * @throws Error (infrastructure) if any file read fails.
+ */
+export const getEvaluationSummary = async (): Promise<EvaluationSummaryRow[]> => {
   const [students, classes, evaluations] = await Promise.all([
     readData<Student>(FILES.STUDENTS),
     readData<Class>(FILES.CLASSES),
     readData<Evaluation>(FILES.EVALUATIONS),
   ]);
 
-  const studentExists = students.some((s) => s.id === studentId);
-  if (!studentExists) {
-    throw new DomainError('INVALID_REFERENCE', `Student with id "${studentId}" was not found.`);
-  }
+  const classMap = new Map(classes.map((c) => [c.id, c]));
 
-  const foundClass = classes.find((c) => c.id === classId);
-  if (!foundClass) {
-    throw new DomainError('INVALID_REFERENCE', `Class with id "${classId}" was not found.`);
-  }
+  const rows: EvaluationSummaryRow[] = students.map((student) => {
+    const studentEvals = evaluations.filter((e) => e.studentId === student.id);
 
-  if (!foundClass.studentIds.includes(studentId)) {
-    throw new DomainError(
-      'INVALID_REFERENCE',
-      `Student "${studentId}" is not enrolled in class "${classId}".`,
-    );
-  }
+    const goals: EvaluationSummaryRow['goals'] = {};
 
-  const now = new Date().toISOString();
-  const existingIndex = evaluations.findIndex(
-    (e) => e.studentId === studentId && e.classId === classId && e.goal === goal,
-  );
+    for (const ev of studentEvals) {
+      const existing = goals[ev.goal];
+      if (!existing || ev.updatedAt > existing.updatedAt) {
+        const cls = classMap.get(ev.classId);
+        goals[ev.goal] = {
+          concept: ev.concept,
+          updatedAt: ev.updatedAt,
+          classId: ev.classId,
+          className: cls?.topic ?? ev.classId,
+        };
+      }
+    }
 
-  let result: Evaluation;
+    return {
+      studentId: student.id,
+      studentName: student.name,
+      goals,
+    };
+  });
 
-  if (existingIndex !== -1) {
-    result = { ...evaluations[existingIndex], concept, updatedAt: now };
-    const updated = evaluations.map((e, i) => (i === existingIndex ? result : e));
-    await writeData<Evaluation>(FILES.EVALUATIONS, updated);
-  } else {
-    result = { id: uuidv4(), studentId, classId, goal, concept, updatedAt: now };
-    await writeData<Evaluation>(FILES.EVALUATIONS, [...evaluations, result]);
-  }
-
-  return result;
+  return rows.sort((a, b) => a.studentName.localeCompare(b.studentName));
 };

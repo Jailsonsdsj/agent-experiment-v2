@@ -18,6 +18,7 @@ export type DomainErrorCode =
   | 'CPF_DUPLICATE'
   | 'STUDENT_ENROLLED'
   | 'INVALID_REFERENCE'
+  | 'VALIDATION_ERROR'
   | 'CONFLICT';
 
 /**
