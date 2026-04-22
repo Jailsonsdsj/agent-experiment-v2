@@ -24,3 +24,9 @@ export type { ModalProps } from './Modal';
 
 export { Table } from './Table';
 export type { TableProps, TableColumn } from './Table';
+
+export { Header } from './Header';
+export type { HeaderProps } from './Header';
+
+export { AppLayout } from './AppLayout';
+export type { AppLayoutProps } from './AppLayout';
