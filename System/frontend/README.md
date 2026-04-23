@@ -1,73 +1,84 @@
-# React + TypeScript + Vite
+# EduEval Frontend
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+This is the user interface for the EduEval educational evaluation system. It provides a browser-based dashboard to manage students, classes, and evaluation data.
 
-Currently, two official plugins are available:
+## Accessing the System
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+1. Start the backend API first so the frontend can fetch data.
+2. From `System/frontend`, install dependencies if needed:
+   ```bash
+   npm install
+   ```
+3. Start the frontend development server:
+   ```bash
+   npm run dev
+   ```
+4. Open the app in your browser at:
+   ```text
+   http://localhost:5173
+   ```
+5. The app opens on the Students page. Use the top navigation to switch between:
+   - `Students`
+   - `Classes`
+   - `Evaluations`
 
-## React Compiler
+## Managing Students
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+- Go to the `Students` page to see all registered students.
+- Click `New Student` to add a student with:
+  - Name
+  - CPF (unique identifier)
+  - Email address
+- Use the edit action to update a student’s name, CPF, or email.
+- Delete a student from the list if they are no longer active.
+- Student email addresses are required for email notifications.
 
-## Expanding the ESLint configuration
+## Managing Classes
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+- Visit the `Classes` page to view all classes.
+- Click `New Class` to create a class with:
+  - Topic
+  - Year
+  - Semester
+- After creating a class, open its detail page to see:
+  - enrolled students
+  - evaluation statistics
+  - the evaluation matrix for that class
+- Use `Edit Class` to:
+  - update class details
+  - add or remove enrolled students from the class
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+## Recording and Reviewing Evaluations
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+- Evaluations are managed from the class detail page.
+- The `Evaluation Matrix` shows each enrolled student and the evaluation goals.
+- For each student and goal, choose one of:
+  - `MANA` — Not Achieved
+  - `MPA` — Partially Achieved
+  - `MA` — Achieved
+- Evaluation changes save immediately when you select a value.
+- The `Evaluations` page shows the latest result for each student across all classes.
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+## Email Notification System
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+- The email system is automatic and runs from the backend.
+- Students with a valid email address receive a daily summary when their evaluations are updated.
+- Emails are sent once per day at `23:00 UTC` and include:
+  - class name
+  - goal name
+  - updated evaluation concept
+- If you update evaluations late in your local day, note that the scheduler uses UTC date boundaries. Updates after `00:00 UTC` may appear in the next day’s notification.
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+## User Workflow Summary
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+1. Register students first on the `Students` page.
+2. Create classes on the `Classes` page.
+3. Enroll students into classes by editing a class.
+4. Record or update evaluations on the class detail page.
+5. Review overall results on the `Evaluations` page.
+6. Students receive daily email summaries automatically when their evaluations change.
+
+## Notes
+
+- There is no separate login or authentication in this interface.
+- The frontend relies on the backend API being available and configured for local development.
